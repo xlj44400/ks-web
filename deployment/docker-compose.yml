@@ -1,0 +1,19 @@
+version: "3"
+services:
+  ks-web:
+    image: ks-web
+    container_name: ks-web
+    build:
+      context: ../.
+      dockerfile: deployment/Dockerfile
+    ports:
+      - 80:80
+    env_file: ../environments/development.env
+    volumes:
+      - ./nginx/sites/localhost.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../build:/usr/share/nginx/html
+networks:
+  default:
+    external:
+      name: ks-network

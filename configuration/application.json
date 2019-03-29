@@ -1,0 +1,12 @@
+{
+  "api": {
+    "auth": {
+      "host": "<host>",
+      "port": "<port>"
+    },
+    "web": {
+      "host": "<host>",
+      "port": "<port>"
+    }
+  }
+}

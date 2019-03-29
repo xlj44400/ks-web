@@ -1,0 +1,22 @@
+# IDE
+.idea/*
+!.idea/libraries/
+!.idea/runConfigurations/
+!.idea/modules.xml
+
+# Build
+build/
+node_modules/
+
+# Security
+
+# Configuration
+application.*.json
+!application.json
+
+# Environment
+*.env
+!.env
+
+# Deployment
+docker-compose.*.yml
