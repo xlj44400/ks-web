@@ -182,7 +182,13 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          require.resolve('style-loader'),
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: Object.assign(
+              {},
+              shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined
+            ),
+          },
           require.resolve('css-loader'),
           {
             loader: require.resolve('less-loader'),
