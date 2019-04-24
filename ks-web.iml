@@ -13,6 +13,10 @@
     <orderEntry type="library" name="kotlin-react" level="project" />
     <orderEntry type="library" name="kotlin-react-dom" level="project" />
     <orderEntry type="library" name="kotlinx-html-js" level="project" />
-    <orderEntry type="library" name="kotlinx-coroutines-core" level="project" />
+    <orderEntry type="library" name="kotlin-antd" level="project" />
+    <orderEntry type="library" name="kotlin-moment" level="project" />
+    <orderEntry type="library" name="kotlin-react-responsive" level="project" />
+    <orderEntry type="library" name="kotlin-react-intl" level="project" />
+    <orderEntry type="library" name="kotlin-react-router-dom" level="project" />
   </component>
 </module>
