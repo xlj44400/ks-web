@@ -1,0 +1,10 @@
+package presentation.view.drawevent
+
+import presentation.view.View
+
+interface DrawEventView : View {
+    fun showSubscribeModal()
+    fun hideSubscribeModal()
+    fun hideSubscribeButton()
+    fun showMessage(message: String)
+}

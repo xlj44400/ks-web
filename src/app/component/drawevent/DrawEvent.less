@@ -1,0 +1,44 @@
+@import "../../Theme";
+
+.event-container {
+  padding: 0 10px;
+
+  .event-header {
+    margin: 10px 0;
+
+    h1 {
+      text-align: left;
+      font-size: 4em;
+    }
+
+    p {
+      text-align: left;
+      font-size: 2em;
+    }
+  }
+
+  .event-content {
+    margin: 40px 0;
+
+    button {
+      margin: 10px;
+    }
+
+    & > span {
+      margin: 50px;
+      color: @primary-color;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+    }
+  }
+
+  .event-footer {
+    margin: 20px 0;
+    padding: 20px 0;
+
+    p {
+      text-align: left;
+    }
+  }
+}
