@@ -1,7 +1,7 @@
 {
   "name": "ks-web",
   "description": "A Web as a part of the Kotlin ES platform",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "antd": "3.10.10",
