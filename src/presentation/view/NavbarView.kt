@@ -16,4 +16,7 @@ interface NavbarView : View {
 
     fun showModal(type: String)
     fun hideModal()
+    fun showSearchInput()
+    fun hideSearchInput()
+    fun focusSearchInput(element: dynamic)
 }
