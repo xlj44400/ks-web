@@ -1,10 +1,12 @@
 @import "../../Theme";
 
 .event-container {
+  display: flex;
+  flex-direction: column;
   padding: 0 10px;
 
   .event-header {
-    margin: 10px 0;
+    padding: 10px 0;
 
     h1 {
       text-align: left;
@@ -18,14 +20,16 @@
   }
 
   .event-content {
-    margin: 40px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     button {
-      margin: 10px;
+      margin: 50px auto;
     }
 
     & > span {
-      margin: 50px;
+      margin: 20px;
       color: @primary-color;
       text-align: center;
       font-size: 2em;
@@ -34,7 +38,6 @@
   }
 
   .event-footer {
-    margin: 20px 0;
     padding: 20px 0;
 
     p {
