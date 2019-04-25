@@ -71,7 +71,7 @@ class CountdownComponent : Component<CountdownProps, CountdownState, CountdownVi
 
     override fun RBuilder.render() {
         div("countdown") {
-            span("countdown-col") {
+            div("countdown-col") {
                 span("countdown-col-element") {
                     strong {
                         +formatTime(state.days)
@@ -84,9 +84,6 @@ class CountdownComponent : Component<CountdownProps, CountdownState, CountdownVi
                         }
                     }
                 }
-            }
-
-            span("countdown-col") {
                 span("countdown-col-element") {
                     strong {
                         +formatTime(state.hours)
@@ -100,17 +97,13 @@ class CountdownComponent : Component<CountdownProps, CountdownState, CountdownVi
                     }
                 }
             }
-
-            span("countdown-col") {
+            div("countdown-col") {
                 span("countdown-col-element") {
                     strong {
                         +formatTime(state.minutes)
                     }
                     span { +"Min" }
                 }
-            }
-
-            span("countdown-col") {
                 span("countdown-col-element") {
                     strong {
                         +formatTime(state.seconds)
