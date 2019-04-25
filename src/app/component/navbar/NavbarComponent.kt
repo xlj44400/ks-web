@@ -36,6 +36,7 @@ interface NavbarState : RState {
     var isSignUp: Boolean
     var isForgotPassword: Boolean
     var isSearchVisible: Boolean
+    var isMenuGroupVisible: Boolean
 }
 
 class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
@@ -108,6 +109,7 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
         isSignUp = false
         isForgotPassword = false
         isSearchVisible = false
+        isMenuGroupVisible = true
     }
 
     override fun RBuilder.render() {
@@ -146,9 +148,14 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                         }
                                         placeholder = "Search Kotlin ES"
                                         onBlur = {
-                                            hideSearchInput()
+                                            if (state.isSearchVisible) {
+                                                hideSearchInput()
+                                            }
                                         }
                                     }
+                                }
+                                if (matches && state.isSearchVisible) {
+                                    hideSearchInput()
                                 }
                             }
                         }
@@ -181,7 +188,7 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                         }
                                     } else {
                                         buttonGroup {
-                                            a("#") {
+                                            a {
                                                 icon {
                                                     attrs {
                                                         type = "search"
@@ -249,7 +256,7 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                             }!!
                                             trigger = arrayOf("click")
                                         }
-                                        a("#", "ant-dropdown-link") {
+                                        a("", "ant-dropdown-link") {
                                             icon {
                                                 attrs.type = "user"
                                             }
