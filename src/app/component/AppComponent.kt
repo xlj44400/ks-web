@@ -16,6 +16,8 @@ import domain.model.User
 import presentation.presenter.AppPresenter
 import presentation.view.AppView
 import react.*
+import react.dom.div
+import react.dom.span
 import react.router.dom.browserRouter
 import react.router.dom.redirect
 import react.router.dom.route
@@ -44,43 +46,47 @@ class AppComponent : Component<RProps, AppState, AppView>(), AppView {
 
     override fun RBuilder.render() {
         browserRouter {
-            layout {
-                header {
-                    route<RProps>(Navigator.Route.HOME) { props ->
-                        navbar {
-                            attrs {
-                                navigator = Navigator(props)
-                                user = state.user
-                                onSignIn = { user ->
-                                    presenter.signIn(user)
-                                }
-                                onSignUp = { user ->
-                                    presenter.signUp(user)
-                                }
-                                onSignOut = { user ->
-                                    presenter.signOut(user)
+            div("app-container") {
+                layout {
+                    header {
+                        route<RProps>(Navigator.Route.HOME) { props ->
+                            navbar {
+                                attrs {
+                                    navigator = Navigator(props)
+                                    user = state.user
+                                    onSignIn = { user ->
+                                        presenter.signIn(user)
+                                    }
+                                    onSignUp = { user ->
+                                        presenter.signUp(user)
+                                    }
+                                    onSignOut = { user ->
+                                        presenter.signOut(user)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                content {
-                    switch {
-                        route(Navigator.Route.HOME, HomeComponent::class, exact = true)
-                         route<AccountRouteProps>(Navigator.Route.ACCOUNT, exact = true) { props ->
-                             val userId = props.match.params.id
+                    content {
+                        switch {
+                            route(Navigator.Route.HOME, HomeComponent::class, exact = true)
+                            route<AccountRouteProps>(Navigator.Route.ACCOUNT, exact = true) { props ->
+                                val userId = props.match.params.id
 
-                             if (state.user.isAuthenticated && state.user.id == userId) {
-                                 account {
-                                     attrs.userId = userId
-                                 }
-                             } else {
-                                 redirect(props.location.pathname, Navigator.Route.HOME)
-                             }
-                         }
+                                if (state.user.isAuthenticated && state.user.id == userId) {
+                                    account {
+                                        attrs.userId = userId
+                                    }
+                                } else {
+                                    redirect(props.location.pathname, Navigator.Route.HOME)
+                                }
+                            }
+                        }
+                    }
+                    footer {
+                        span { +"Copyright (C) 2019 Kotlin ES" }
                     }
                 }
-                footer { +"Copyright (C) 2019 Kotlin ES" }
             }
         }
     }

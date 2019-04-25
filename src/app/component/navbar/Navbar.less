@@ -1,48 +1,51 @@
 @import "../../Theme.less";
 
-.navbar-logo {
+.navbar-container {
+  height: 64px;
+
+  .navbar-logo {
     float: left;
     cursor: pointer;
 
     &:active, &:focus {
-        text-decoration: none;
+      text-decoration: none;
     }
 
     img {
-        height: 24px;
-        margin-right: 16px;
-        vertical-align: middle;
+      height: 24px;
+      margin-right: 16px;
+      vertical-align: middle;
     }
-}
+  }
 
-.navbar-menu-group {
+  .navbar-menu-group {
     float: right;
 
     .ant-btn-group {
-        margin: 0 20px;
+      margin: 0 20px;
     }
 
     .ant-btn-icon-only {
-        margin-right: 5px;
+      margin-right: 5px;
     }
 
     .ant-dropdown-trigger {
-        .anticon svg {
-            font-size: @font-size-lg;
-        }
+      .anticon svg {
+        font-size: @font-size-lg;
+      }
 
-        .anticon-user {
-            margin-right: 8px;
-        }
+      .anticon-user {
+        margin-right: 8px;
+      }
     }
-}
+  }
 
-.navbar-user-link {
+  .navbar-user-link {
     display: inline-block;
     margin: 0 20px;
 
     a:active, a:focus {
-        text-decoration: none;
+      text-decoration: none;
     }
+  }
 }
-
