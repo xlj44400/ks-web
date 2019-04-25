@@ -2,16 +2,38 @@
 @import "../Theme";
 
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
   font-size: @font-size-base;
   font-family: @font-family;
-  text-align: center;
 }
 
-.ant-layout-header {
-  padding-left: 32px;
-  padding-right: 32px;
+#root {
+  height: 100%;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  .ant-layout-header {
+    position: fixed;
+    width: 100%;
+    padding-left: 32px;
+    padding-right: 32px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05), 0 6px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .ant-layout-content {
+    flex: 1;
+    margin-top: 64px;
+  }
+
+  .ant-layout-footer {
+    text-align: center;
+  }
 }
 
 .ant-dropdown-menu-item {
