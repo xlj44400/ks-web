@@ -35,6 +35,7 @@ interface NavbarState : RState {
     var isSignIn: Boolean
     var isSignUp: Boolean
     var isForgotPassword: Boolean
+    var isSearchVisible: Boolean
 }
 
 class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
@@ -85,11 +86,28 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
         }
     }
 
+    override fun showSearchInput() {
+        setState {
+            isSearchVisible = true
+        }
+    }
+
+    override fun hideSearchInput() {
+        setState {
+            isSearchVisible = false
+        }
+    }
+
+    override fun focusSearchInput(element: dynamic) {
+        element?.focus()
+    }
+
     override fun NavbarState.init() {
         isModalVisible = false
         isSignIn = false
         isSignUp = false
         isForgotPassword = false
+        isSearchVisible = false
     }
 
     override fun RBuilder.render() {
@@ -114,108 +132,129 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                             }
                         }
                     }
-                    col {
-                        attrs.span = 10
-                        input {
-                            attrs {
-                                prefix = buildElement {
-                                    icon {
-                                        attrs.type = "search"
+                    if (matches || state.isSearchVisible) {
+                        col {
+                            attrs.span = if (matches) 8 else 18
+                            input {
+                                attrs {
+                                    ref<dynamic> { node -> focusSearchInput(node) }
+                                    prefix = buildElement {
+                                        icon {
+                                            attrs.type = "search"
+                                        }
+                                    }
+                                    placeholder = "Search Kotlin ES"
+                                    onBlur = {
+                                        hideSearchInput()
                                     }
                                 }
-                                placeholder = "Search Kotlin ES"
                             }
                         }
                     }
-                    col {
-                        attrs.span = 8
-                        div("navbar-menu-group") {
-                            if (matches && !props.user.isAuthenticated) {
-                                buttonGroup {
-                                    button {
-                                        attrs.onClick = {
-                                            showModal(NavbarView.ModalType.SIGN_UP)
+                    if (!state.isSearchVisible) {
+                        col {
+                            attrs.span = if (matches) 10 else 18
+                            div("navbar-menu-group") {
+                                if (matches && !props.user.isAuthenticated) {
+                                    buttonGroup {
+                                        button {
+                                            attrs.onClick = {
+                                                showModal(NavbarView.ModalType.SIGN_UP)
+                                            }
+                                            +"Sign up"
                                         }
-                                        +"Sign up"
-                                    }
-                                    button {
-                                        attrs {
-                                            type = "primary"
-                                            onClick = {
-                                                showModal(NavbarView.ModalType.SIGN_IN)
+                                        button {
+                                            attrs {
+                                                type = "primary"
+                                                onClick = {
+                                                    showModal(NavbarView.ModalType.SIGN_IN)
+                                                }
                                             }
+                                            +"Sign in"
                                         }
-                                        +"Sign in"
                                     }
-                                }
-                            } else if (matches && props.user.isAuthenticated) {
-                                div("navbar-user-link") {
-                                    span { +"Welcome " }
-                                    routeLink("/user/${props.user.id}/account") { +props.user.username }
-                                }
-                            }
-                            dropdown {
-                                attrs {
-                                    overlay = buildElement {
-                                        menu {
-                                            attrs.onClick = { param ->
-                                                when (param.key) {
-                                                    NavbarView.MenuItem.GET_STARTED.key -> {
-                                                        showModal(NavbarView.ModalType.SIGN_UP)
-                                                    }
-                                                    NavbarView.MenuItem.ACCOUNT.key -> {
-                                                        props.navigator.navigateTo("/user/${props.user.id}/account")
-                                                    }
-                                                    NavbarView.MenuItem.SIGN_OUT.key -> {
-                                                        props.onSignOut.invoke(props.user)
-                                                    }
-                                                    NavbarView.MenuItem.TELEGRAM.key -> {
-                                                        props.navigator.openWindow("https://t.me/kotlinES")
+                                } else if (matches && props.user.isAuthenticated) {
+                                    div("navbar-user-link") {
+                                        span { +"Welcome " }
+                                        routeLink("/user/${props.user.id}/account") { +props.user.username }
+                                    }
+                                } else {
+                                    buttonGroup {
+                                        a("#") {
+                                            icon {
+                                                attrs {
+                                                    type = "search"
+                                                    onClick = {
+                                                        showSearchInput()
                                                     }
                                                 }
-                                            }
-                                            if (!matches && !props.user.isAuthenticated) {
-                                                menuItem {
-                                                    attrs.key = NavbarView.MenuItem.GET_STARTED.key
-                                                    icon {
-                                                        attrs.type = "login"
-                                                    }
-                                                    +"Get started"
-                                                }
-                                                menuDivider {}
-                                            }
-                                            if (props.user.isAuthenticated) {
-                                                menuItem {
-                                                    attrs.key = NavbarView.MenuItem.ACCOUNT.key
-                                                    icon {
-                                                        attrs.type = "profile"
-                                                    }
-                                                    +"My account"
-                                                }
-                                                menuItem {
-                                                    attrs.key = NavbarView.MenuItem.SIGN_OUT.key
-                                                    icon {
-                                                        attrs.type = "logout"
-                                                    }
-                                                    +"Sign out"
-                                                }
-                                                menuDivider {}
-                                            }
-                                            menuItem {
-                                                attrs.key = NavbarView.MenuItem.TELEGRAM.key
-                                                telegramIcon()
-                                                +"Telegram"
                                             }
                                         }
-                                    }!!
-                                    trigger = arrayOf("click")
-                                }
-                                a("#", "ant-dropdown-link") {
-                                    icon {
-                                        attrs.type = "user"
                                     }
-                                    icon {
-                                        attrs.type = "down"
+                                }
+                                dropdown {
+                                    attrs {
+                                        overlay = buildElement {
+                                            menu {
+                                                attrs.onClick = { param ->
+                                                    when (param.key) {
+                                                        NavbarView.MenuItem.GET_STARTED.key -> {
+                                                            showModal(NavbarView.ModalType.SIGN_UP)
+                                                        }
+                                                        NavbarView.MenuItem.ACCOUNT.key -> {
+                                                            props.navigator.navigateTo("/user/${props.user.id}/account")
+                                                        }
+                                                        NavbarView.MenuItem.SIGN_OUT.key -> {
+                                                            props.onSignOut.invoke(props.user)
+                                                        }
+                                                        NavbarView.MenuItem.TELEGRAM.key -> {
+                                                            props.navigator.openWindow("https://t.me/kotlinES")
+                                                        }
+                                                    }
+                                                }
+                                                if (!matches && !props.user.isAuthenticated) {
+                                                    menuItem {
+                                                        attrs.key = NavbarView.MenuItem.GET_STARTED.key
+                                                        icon {
+                                                            attrs.type = "login"
+                                                        }
+                                                        +"Get started"
+                                                    }
+                                                    menuDivider {}
+                                                }
+                                                if (props.user.isAuthenticated) {
+                                                    menuItem {
+                                                        attrs.key = NavbarView.MenuItem.ACCOUNT.key
+                                                        icon {
+                                                            attrs.type = "profile"
+                                                        }
+                                                        +"My account"
+                                                    }
+                                                    menuItem {
+                                                        attrs.key = NavbarView.MenuItem.SIGN_OUT.key
+                                                        icon {
+                                                            attrs.type = "logout"
+                                                        }
+                                                        +"Sign out"
+                                                    }
+                                                    menuDivider {}
+                                                }
+                                                menuItem {
+                                                    attrs.key = NavbarView.MenuItem.TELEGRAM.key
+                                                    telegramIcon()
+                                                    +"Telegram"
+                                                }
+                                            }
+                                        }!!
+                                        trigger = arrayOf("click")
+                                    }
+                                    a("#", "ant-dropdown-link") {
+                                        icon {
+                                            attrs.type = "user"
+                                        }
+                                        icon {
+                                            attrs.type = "down"
+                                        }
                                     }
                                 }
                             }
