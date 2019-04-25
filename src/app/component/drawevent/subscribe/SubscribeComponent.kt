@@ -5,12 +5,11 @@ import antd.form.form
 import antd.form.formItem
 import antd.icon.icon
 import antd.input.input
-import antd.modal.ModalComponent
+import antd.message.message as Message
 import app.component.Component
 import app.datasource.UserDiskDataStore
 import data.repository.UserRepository
 import domain.model.User
-import kotlinext.js.jsObject
 import presentation.presenter.drawevent.SubscribePresenter
 import presentation.view.drawevent.SubscribeView
 import react.*
@@ -51,9 +50,7 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
     }
 
     override fun showError(error: String) {
-        ModalComponent.error(jsObject {
-            content = error
-        })
+        Message.error(error)
     }
 
     override fun showLoading() {

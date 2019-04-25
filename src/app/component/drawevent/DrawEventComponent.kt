@@ -1,14 +1,13 @@
 package app.component.drawevent
 
 import antd.button.button
-import antd.modal.ModalComponent
+import antd.message.message as Message
 import antd.modal.modal
 import app.component.Component
 import app.component.drawevent.countdown.countdown
 import app.component.drawevent.subscribe.subscribe
 import app.datasource.UserDiskDataStore
 import data.repository.UserRepository
-import kotlinext.js.jsObject
 import presentation.presenter.drawevent.DrawEventPresenter
 import presentation.view.drawevent.DrawEventView
 import react.*
@@ -45,9 +44,7 @@ class DrawEventComponent : Component<RProps, DrawEventState, DrawEventView>(), D
     }
 
     override fun showMessage(message: String) {
-        ModalComponent.success(jsObject {
-            content = message
-        })
+        Message.success(message)
     }
 
     override fun DrawEventState.init() {
