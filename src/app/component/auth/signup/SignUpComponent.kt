@@ -10,6 +10,7 @@ import app.component.Component
 import app.datasource.UserDiskDataStore
 import data.repository.UserRepository
 import domain.model.User
+import kotlinext.js.jsObject
 import kotlinx.html.js.onClickFunction
 import presentation.presenter.auth.SignUpPresenter
 import presentation.view.auth.SignUpView
@@ -17,8 +18,12 @@ import react.*
 import react.dom.a
 import react.dom.div
 import react.dom.span
+import reactintl.IntlShape
+import reactintl.injectIntl
+import reactintl.message.formattedMessage
 
 interface SignUpProps : RProps {
+    var intl: IntlShape
     var onSignUp: (User) -> Unit
     var onSignInLinkClick: () -> Unit
 }
@@ -42,40 +47,50 @@ interface SignUpState : RState {
 class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignUpView {
     override val presenter = SignUpPresenter(this, UserRepository(UserDiskDataStore()))
 
-    override fun updateUsername(value: String, isValid: Boolean, error: String?) {
+    override fun updateUsername(value: String, isValid: Boolean, errorKey: String) {
         setState {
             username = value
             isValidUsername = isValid
-            usernameError = error
+            usernameError = props.intl.formatMessage(jsObject {
+                id = "sign-up.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun updateEmail(value: String, isValid: Boolean, error: String?) {
+    override fun updateEmail(value: String, isValid: Boolean, errorKey: String) {
         setState {
             email = value
             isValidEmail = isValid
-            emailError = error
+            emailError = props.intl.formatMessage(jsObject {
+                id = "sign-up.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun updatePassword(value: String, isValid: Boolean, error: String?) {
+    override fun updatePassword(value: String, isValid: Boolean, errorKey: String) {
         setState {
             password = value
             isValidPassword = isValid
-            passwordError = error
+            passwordError = props.intl.formatMessage(jsObject {
+                id = "sign-up.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun updateRepeatPassword(value: String, isValid: Boolean, error: String?) {
+    override fun updateRepeatPassword(value: String, isValid: Boolean, errorKey: String) {
         setState {
             repeatPassword = value
             isValidRepeatPassword = isValid
-            repeatPasswordError = error
+            repeatPasswordError = props.intl.formatMessage(jsObject {
+                id = "sign-up.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun showError(error: String) {
-        Message.error(error)
+    override fun showError(errorKey: String) {
+        Message.error(props.intl.formatMessage(jsObject {
+            id = "sign-up.message-error.$errorKey"
+        }, undefined))
     }
 
     override fun showLoading() {
@@ -108,7 +123,9 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
 
     override fun RBuilder.render() {
         div("sign-up-modal-header") {
-            span { +"Welcome to Kotlin ES" }
+            formattedMessage {
+                attrs.id = "sign-up.header.title"
+            }
         }
         div("sign-up-modal-content") {
             form {
@@ -116,7 +133,7 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidUsername) "success" else "error"
-                        help = state.usernameError
+                        help = if (state.isValidUsername) null else state.usernameError
                     }
                     input {
                         attrs {
@@ -125,7 +142,9 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                                     attrs.type = "user"
                                 }
                             }
-                            placeholder = "Username"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id =  "sign-up.content.input-username.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -139,7 +158,7 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidEmail) "success" else "error"
-                        help = state.emailError
+                        help = if (state.isValidEmail) null else state.emailError
                     }
                     input {
                         attrs {
@@ -148,7 +167,9 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                                     attrs.type = "mail"
                                 }
                             }
-                            placeholder = "Email"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id =  "sign-up.content.input-email.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -162,7 +183,7 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidPassword) "success" else "error"
-                        help = state.passwordError
+                        help = if (state.isValidPassword) null else state.passwordError
                     }
                     input {
                         attrs {
@@ -172,7 +193,9 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                                 }
                             }
                             type = "password"
-                            placeholder = "Password"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id =  "sign-up.content.input-password.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -186,7 +209,7 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidRepeatPassword) "success" else "error"
-                        help = state.repeatPasswordError
+                        help = if (state.isValidRepeatPassword) null else state.repeatPasswordError
                     }
                     input {
                         attrs {
@@ -196,7 +219,9 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                                 }
                             }
                             type = "password"
-                            placeholder = "Repeat password"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id =  "sign-up.content.input-repeat-password.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -230,19 +255,27 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                         }
                     }
                 }
-                +"Sign up"
+                formattedMessage {
+                    attrs.id = "sign-up.footer.button.text"
+                }
             }
             span {
-                +"Already have an account?"
+                +props.intl.formatMessage(jsObject {
+                    id =  "sign-up.footer.sign-in.text"
+                }, undefined)
                 a {
                     attrs.onClickFunction = {
                         props.onSignInLinkClick.invoke()
                     }
-                    +"Sign in"
+                    formattedMessage {
+                        attrs.id = "sign-up.footer.link-sign-in"
+                    }
                 }
             }
         }
     }
 }
 
-fun RBuilder.signUp(handler: RHandler<SignUpProps>) = child(SignUpComponent::class, handler)
+private val injectedSignUp = injectIntl(SignUpComponent::class.js.unsafeCast<JsClass<react.Component<SignUpProps, SignUpState>>>())
+
+fun RBuilder.signUp(handler: RHandler<SignUpProps>) = child(injectedSignUp, jsObject {}, handler)

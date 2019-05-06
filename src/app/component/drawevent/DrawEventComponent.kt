@@ -8,21 +8,27 @@ import app.component.drawevent.countdown.countdown
 import app.component.drawevent.subscribe.subscribe
 import app.datasource.UserDiskDataStore
 import data.repository.UserRepository
+import kotlinext.js.jsObject
 import presentation.presenter.drawevent.DrawEventPresenter
 import presentation.view.drawevent.DrawEventView
 import react.*
 import react.dom.div
-import react.dom.h1
-import react.dom.p
-import react.dom.span
+import reactintl.IntlShape
+import reactintl.injectIntl
+import reactintl.message.formattedHTMLMessage
+import reactintl.message.formattedMessage
 import kotlin.js.Date
+
+interface DrawEventProps : RProps {
+    var intl: IntlShape
+}
 
 interface DrawEventState : RState {
     var isSubscribeModalVisible: Boolean
     var isEventEnded: Boolean
 }
 
-class DrawEventComponent : Component<RProps, DrawEventState, DrawEventView>(), DrawEventView {
+class DrawEventComponent : Component<DrawEventProps, DrawEventState, DrawEventView>(), DrawEventView {
     override val presenter = DrawEventPresenter(this, UserRepository(UserDiskDataStore()))
 
     override fun showSubscribeModal() {
@@ -43,8 +49,10 @@ class DrawEventComponent : Component<RProps, DrawEventState, DrawEventView>(), D
         }
     }
 
-    override fun showMessage(message: String) {
-        Message.success(message)
+    override fun showMessage(messageKey: String) {
+        Message.success(props.intl.formatHTMLMessage(jsObject {
+            id = "draw-event.message-success.$messageKey"
+        }, undefined))
     }
 
     override fun DrawEventState.init() {
@@ -55,10 +63,11 @@ class DrawEventComponent : Component<RProps, DrawEventState, DrawEventView>(), D
     override fun RBuilder.render() {
         div("event-container") {
             div("event-header") {
-                h1 { +"Free Kotlin Stickers" }
-                p {
-                    +"We are drawing 30 Kotlin stickers for the first users of the platform, "
-                    +"you can be one of the lucky ones, don't miss this opportunity."
+                formattedHTMLMessage {
+                    attrs.id = "draw-event.header.title"
+                }
+                formattedHTMLMessage {
+                    attrs.id = "draw-event.header.description"
                 }
             }
             div("event-content") {
@@ -79,14 +88,20 @@ class DrawEventComponent : Component<RProps, DrawEventState, DrawEventView>(), D
                                 showSubscribeModal()
                             }
                         }
-                        +"Subscribe now"
+                        formattedMessage {
+                            attrs.id = "draw-event.content.button.text"
+                        }
                     }
                 } else {
-                    span { +"Event has ended" }
+                    formattedMessage {
+                        attrs.id = "draw-event.content.event-ended"
+                    }
                 }
             }
             div("event-footer") {
-                p { +"*Only users from Spain can participate, we are sorry for everyone else." }
+                formattedHTMLMessage {
+                    attrs.id = "draw-event.footer.info"
+                }
             }
         }
         modal {
@@ -113,4 +128,6 @@ class DrawEventComponent : Component<RProps, DrawEventState, DrawEventView>(), D
     }
 }
 
-fun RBuilder.drawEvent() = child(DrawEventComponent::class) {}
+private val injectedDrawEvent = injectIntl(DrawEventComponent::class.js.unsafeCast<JsClass<react.Component<DrawEventProps, DrawEventState>>>())
+
+fun RBuilder.drawEvent(handler: RHandler<DrawEventProps>) = child(injectedDrawEvent, jsObject {}, handler)

@@ -5,31 +5,23 @@ import presentation.presenter.Presenter
 import presentation.view.auth.SignInView
 
 class SignInPresenter(view: SignInView, private val userRepository: UserRepository) : Presenter<SignInView>(view) {
-    object Error {
-        const val USERNAME_EMPTY = "Username can not be empty"
-        const val PASSWORD_EMPTY = "Password can not be empty"
-        const val PASSWORD_NOT_MATCH = "Password does not match"
-        const val USER_NOT_EXIST = "User with that username does not exists"
+    enum class Error(val key: String) {
+        USERNAME_EMPTY("username-empty"),
+        PASSWORD_EMPTY("password-empty"),
+        PASSWORD_NOT_MATCH("password-not-match"),
+        USER_NOT_EXIST("user-not-exist")
     }
 
     fun validateUsername(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updateUsername(value, true)
-        } else {
-            view.updateUsername(value,false, Error.USERNAME_EMPTY)
-        }
+        view.updateUsername(value,isValid, Error.USERNAME_EMPTY.key)
     }
 
     fun validatePassword(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updatePassword(value, true)
-        } else {
-            view.updatePassword(value,false, Error.PASSWORD_EMPTY)
-        }
+        view.updatePassword(value,isValid, Error.PASSWORD_EMPTY.key)
     }
 
     fun signIn(username: String, password: String) {
@@ -39,12 +31,12 @@ class SignInPresenter(view: SignInView, private val userRepository: UserReposito
 
         if (user != null) {
             if (user.password != password) {
-                view.showError(Error.PASSWORD_NOT_MATCH)
+                view.showError(Error.PASSWORD_NOT_MATCH.key)
             } else {
                 view.onSignIn(user)
             }
         } else {
-            view.showError(Error.USER_NOT_EXIST)
+            view.showError(Error.USER_NOT_EXIST.key)
         }
 
         view.hideLoading()

@@ -10,7 +10,7 @@ import react.dom.div
 class HomeComponent : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
         div("home-container") {
-            drawEvent()
+            drawEvent {}
         }
     }
 }

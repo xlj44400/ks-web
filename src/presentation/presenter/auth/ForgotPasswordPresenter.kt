@@ -5,23 +5,19 @@ import presentation.presenter.Presenter
 import presentation.view.auth.ForgotPasswordView
 
 class ForgotPasswordPresenter(view: ForgotPasswordView, private val userRepository: UserRepository) : Presenter<ForgotPasswordView>(view) {
-    object Error {
-        const val EMAIL_EMPTY = "Email can not be empty"
-        const val USER_NOT_FOUND= "There is not user account with that email"
+    enum class Error(val key: String) {
+        EMAIL_EMPTY("email-empty"),
+        USER_NOT_FOUND("user-not-found")
     }
 
-    object Message {
-        const val EMAIL_SENT = "Email was sent successfully"
+    enum class Message(val key: String) {
+        EMAIL_SENT("email-sent")
     }
 
     fun validateEmail(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updateEmail(value, true)
-        } else {
-            view.updateEmail(value,false, Error.EMAIL_EMPTY)
-        }
+        view.updateEmail(value,isValid, Error.EMAIL_EMPTY.key)
     }
 
     fun sendEmail(email: String) {
@@ -32,9 +28,9 @@ class ForgotPasswordPresenter(view: ForgotPasswordView, private val userReposito
         if (user != null) {
             view.onSendEmail()
 
-            view.showMessage(Message.EMAIL_SENT)
+            view.showMessage(Message.EMAIL_SENT.key)
         } else {
-            view.showError(Error.USER_NOT_FOUND)
+            view.showError(Error.USER_NOT_FOUND.key)
         }
 
         view.hideLoading()

@@ -10,13 +10,17 @@ import app.component.Component
 import app.datasource.UserDiskDataStore
 import data.repository.UserRepository
 import domain.model.User
+import kotlinext.js.jsObject
 import presentation.presenter.drawevent.SubscribePresenter
 import presentation.view.drawevent.SubscribeView
 import react.*
 import react.dom.div
-import react.dom.span
+import reactintl.IntlShape
+import reactintl.injectIntl
+import reactintl.message.formattedMessage
 
 interface SubscribeProps : RProps {
+    var intl: IntlShape
     var onSubscribe: (User) -> Unit
 }
 
@@ -33,24 +37,30 @@ interface SubscribeState : RState {
 class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeView>(), SubscribeView {
     override val presenter = SubscribePresenter(this, UserRepository(UserDiskDataStore()))
 
-    override fun updateUsername(value: String, isValid: Boolean, error: String?) {
+    override fun updateUsername(value: String, isValid: Boolean, errorKey: String) {
         setState {
             username = value
             isValidUsername = isValid
-            usernameError = error
+            usernameError = props.intl.formatMessage(jsObject {
+                id = "subscribe.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun updateEmail(value: String, isValid: Boolean, error: String?) {
+    override fun updateEmail(value: String, isValid: Boolean, errorKey: String) {
         setState {
             email = value
             isValidEmail = isValid
-            emailError = error
+            emailError = props.intl.formatMessage(jsObject {
+                id = "subscribe.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun showError(error: String) {
-        Message.error(error)
+    override fun showError(errorKey: String) {
+        Message.error(props.intl.formatMessage(jsObject {
+            id = "subscribe.message-error.$errorKey"
+        }, undefined))
     }
 
     override fun showLoading() {
@@ -79,7 +89,9 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
 
     override fun RBuilder.render() {
         div("subscribe-modal-header") {
-            span { +"Subscribe to event" }
+            formattedMessage {
+                attrs.id = "subscribe.header.title"
+            }
         }
         div("subscribe-modal-content") {
             form {
@@ -87,7 +99,7 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidUsername) "success" else "error"
-                        help = state.usernameError
+                        help = if (state.isValidUsername) null else state.usernameError
                     }
                     input {
                         attrs {
@@ -96,7 +108,9 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                                     attrs.type = "user"
                                 }
                             }
-                            placeholder = "Username"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id = "subscribe.content.input-username.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -110,7 +124,7 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidEmail) "success" else "error"
-                        help = state.emailError
+                        help = if (state.isValidEmail) null else state.emailError
                     }
                     input {
                         attrs {
@@ -119,7 +133,9 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                                     attrs.type = "mail"
                                 }
                             }
-                            placeholder = "Email"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id = "subscribe.content.input-email.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -150,10 +166,14 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                         }
                     }
                 }
-                +"Subscribe"
+                formattedMessage {
+                    attrs.id = "subscribe.footer.button.text"
+                }
             }
         }
     }
 }
 
-fun RBuilder.subscribe(handler: RHandler<SubscribeProps>) = child(SubscribeComponent::class, handler)
+private val injectedSubscribe = injectIntl(SubscribeComponent::class.js.unsafeCast<JsClass<react.Component<SubscribeProps, SubscribeState>>>())
+
+fun RBuilder.subscribe(handler: RHandler<SubscribeProps>) = child(injectedSubscribe, jsObject {}, handler)

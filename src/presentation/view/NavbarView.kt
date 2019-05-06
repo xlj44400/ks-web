@@ -1,10 +1,13 @@
 package presentation.view
 
+import domain.model.Language
+
 interface NavbarView : View {
     enum class MenuItem(val key: String) {
         GET_STARTED("get-started"),
         ACCOUNT("account"),
         SIGN_OUT("sign-out"),
+        LANGUAGE("language"),
         TELEGRAM("telegram")
     }
 
@@ -14,6 +17,7 @@ interface NavbarView : View {
         const val FORGOT_PASSWORD = "forgot-password"
     }
 
+    fun updateLanguages(languages: Array<Language>)
     fun showModal(type: String)
     fun hideModal()
     fun showSearchInput()

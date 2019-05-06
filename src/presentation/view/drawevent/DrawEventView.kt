@@ -6,5 +6,5 @@ interface DrawEventView : View {
     fun showSubscribeModal()
     fun hideSubscribeModal()
     fun hideSubscribeButton()
-    fun showMessage(message: String)
+    fun showMessage(messageKey: String)
 }
