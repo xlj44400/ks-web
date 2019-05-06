@@ -6,8 +6,8 @@ import presentation.presenter.Presenter
 import presentation.view.drawevent.DrawEventView
 
 class DrawEventPresenter(view: DrawEventView, private val userRepository: UserRepository) : Presenter<DrawEventView>(view) {
-    object Message {
-        const val SUBSCRIBED = "You have been subscribed successfully"
+    enum class Message(val key: String) {
+        SUBSCRIBED("subscribed")
     }
 
     fun subscribe(user: User) {
@@ -16,6 +16,6 @@ class DrawEventPresenter(view: DrawEventView, private val userRepository: UserRe
 
         userRepository.add(subscribeUser)
 
-        view.showMessage(Message.SUBSCRIBED)
+        view.showMessage(Message.SUBSCRIBED.key)
     }
 }

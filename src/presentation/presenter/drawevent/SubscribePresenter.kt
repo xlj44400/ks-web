@@ -6,30 +6,22 @@ import presentation.presenter.Presenter
 import presentation.view.drawevent.SubscribeView
 
 class SubscribePresenter(view: SubscribeView, private val userRepository: UserRepository) : Presenter<SubscribeView>(view) {
-    object Error {
-        const val USERNAME_EMPTY = "Username can not be empty"
-        const val EMAIL_EMPTY = "Email can not be empty"
-        const val USER_ALREADY_SUBSCRIBED = "User with that username already subscribed"
+    enum class Error(val key: String) {
+        USERNAME_EMPTY("username-empty"),
+        EMAIL_EMPTY("email-empty"),
+        USER_ALREADY_SUBSCRIBED("user-already-subscribed")
     }
 
     fun validateUsername(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updateUsername(value, true)
-        } else {
-            view.updateUsername(value,false, Error.USERNAME_EMPTY)
-        }
+        view.updateUsername(value, isValid, Error.USERNAME_EMPTY.key)
     }
 
     fun validateEmail(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updateEmail(value, true)
-        } else {
-            view.updateEmail(value,false, Error.EMAIL_EMPTY)
-        }
+        view.updateEmail(value,isValid, Error.EMAIL_EMPTY.key)
     }
 
     fun subscribe(user: User) {
@@ -38,7 +30,7 @@ class SubscribePresenter(view: SubscribeView, private val userRepository: UserRe
         val foundUser = userRepository.findByUsername(user.username, true)
 
         if (foundUser != null) {
-            view.showError(Error.USER_ALREADY_SUBSCRIBED)
+            view.showError(Error.USER_ALREADY_SUBSCRIBED.key)
         } else {
             view.onSubscribe(user)
         }

@@ -1,13 +1,47 @@
 package presentation.presenter
 
 import app.datasource.AuthDataStore
+import app.localization.*
+import data.repository.LanguageRepository
 import data.repository.UserRepository
+import domain.model.Language
 import domain.model.User
+import kotlinext.js.jsObject
 import presentation.view.AppView
 
 class AppPresenter(view: AppView,
+                   private val languageRepository: LanguageRepository,
                    private val userRepository: UserRepository,
                    private val authDataStore: AuthDataStore) : Presenter<AppView>(view) {
+    fun checkCurrentLocale(defaultLocale: String) {
+        val language = languageRepository.findAll().find { l -> l.isActive }
+
+        if (language != null) {
+            changeLocale(language.locale)
+        } else {
+            changeLocale(defaultLocale)
+        }
+    }
+
+    fun changeLocale(locale: String) {
+        val newLocale: Locale = when (locale) {
+            ES_ES -> jsObject {
+                id = locale
+                localeData = esLocale
+                messages = esMessages
+            }
+            else -> jsObject {
+                id = locale
+                localeData = enLocale
+                messages = enMessages
+            }
+        }
+
+        languageRepository.update(Language.create(locale, true))
+
+        view.updateLocale(newLocale)
+    }
+
     fun checkUserSigned() {
         val user = authDataStore.getAuthToken()?.let {
             userRepository.findById(it)

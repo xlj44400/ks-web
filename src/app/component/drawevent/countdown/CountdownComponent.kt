@@ -1,12 +1,14 @@
 package app.component.drawevent.countdown
 
 import app.component.Component
+import kotlinext.js.js
 import presentation.presenter.drawevent.CountdownPresenter
 import presentation.view.drawevent.CountdownView
 import react.*
 import react.dom.div
 import react.dom.span
 import react.dom.strong
+import reactintl.message.formattedMessage
 import kotlin.browser.window
 import kotlin.js.Date
 
@@ -76,11 +78,10 @@ class CountdownComponent : Component<CountdownProps, CountdownState, CountdownVi
                     strong {
                         +formatTime(state.days)
                     }
-                    span {
-                        if (state.days == 1) {
-                            +"Day"
-                        } else {
-                            +"Days"
+                    formattedMessage {
+                        attrs {
+                            id = "countdown.time.days"
+                            values = js { days = state.days }.unsafeCast<Any>()
                         }
                     }
                 }
@@ -88,11 +89,10 @@ class CountdownComponent : Component<CountdownProps, CountdownState, CountdownVi
                     strong {
                         +formatTime(state.hours)
                     }
-                    span {
-                        if (state.hours == 1) {
-                            +"Hour"
-                        } else {
-                            +"Hours"
+                    formattedMessage {
+                        attrs {
+                            id = "countdown.time.hours"
+                            values = js { hours = state.hours }.unsafeCast<Any>()
                         }
                     }
                 }
@@ -102,13 +102,17 @@ class CountdownComponent : Component<CountdownProps, CountdownState, CountdownVi
                     strong {
                         +formatTime(state.minutes)
                     }
-                    span { +"Min" }
+                    formattedMessage {
+                        attrs.id = "countdown.time.min"
+                    }
                 }
                 span("countdown-col-element") {
                     strong {
                         +formatTime(state.seconds)
                     }
-                    span { +"Sec" }
+                    formattedMessage {
+                        attrs.id = "countdown.time.sec"
+                    }
                 }
             }
         }

@@ -43,10 +43,10 @@
   resolved "https://registry.yarnpkg.com/@jetbrains/gen-idea-libs/-/gen-idea-libs-1.0.11.tgz#8d04ecd798b743ec828b6fede078bf063bcd6b38"
   integrity sha512-SfnzO+gYZIyhUbYHUiCbJDTuwpOorSf5zs2zOuzxn5Cx7OvdJJo5Y59vgZLRw7/b3POjMT5ib+yu5cWfWhekWQ==
 
-"@jetbrains/kotlin-extensions@^1.0.1-pre.58":
-  version "1.0.1-pre.67"
-  resolved "https://registry.yarnpkg.com/@jetbrains/kotlin-extensions/-/kotlin-extensions-1.0.1-pre.67.tgz#87d6f585839de9d7f18dbcb22d64c2ab79874c47"
-  integrity sha512-C6ZpK5G2tqmPSmVblDliPjtg1dA1MC5rt5JUY/8eEliFQfRy9/OeYvSuBtn4/zPJ7IR3IUhekdZmBJqbvTxoxA==
+"@jetbrains/kotlin-extensions@1.0.1-pre.58":
+  version "1.0.1-pre.58"
+  resolved "https://registry.yarnpkg.com/@jetbrains/kotlin-extensions/-/kotlin-extensions-1.0.1-pre.58.tgz#55b9d135cf188bac9a622b1c7cc3a9bc543195bb"
+  integrity sha512-WJCsmlGinu/P6Guwb+ETy+Y9CbsH5q4VdPiyJ9aYEOztlat0v4aJYIrndOv2r9WxlEpgu/JUx/arJaVxSTuTZA==
 
 "@jetbrains/kotlin-react-dom@^16.5.2-pre.58":
   version "16.5.2-pre.58"
@@ -92,20 +92,20 @@
     mkdirp "^0.5.1"
     ts2kt "^0.1.3"
 
-"@kotlinspain/kotlin-antd@^3.10.10-pre.1":
-  version "3.10.10-pre.1"
-  resolved "https://registry.yarnpkg.com/@kotlinspain/kotlin-antd/-/kotlin-antd-3.10.10-pre.1.tgz#60dad854f49477310171037f3f1549a0e8b08cd5"
-  integrity sha512-tAuAP50BTGSvLh38aqkeixzvQSmuEVFUpqNJ3aYiOSobODmHt0aqCAjKepdWrWRZYpF5hUmJXRax4Ox5tcZA8A==
+"@kotlinspain/kotlin-antd@^3.10.10-pre.2":
+  version "3.10.10-pre.2"
+  resolved "https://registry.yarnpkg.com/@kotlinspain/kotlin-antd/-/kotlin-antd-3.10.10-pre.2.tgz#60b072cea38445bd8a14f0b1e4dcdc1e78b7919b"
+  integrity sha512-9mN0lmZQyV+IrLglMjd0wzUQwxutEEFRnf79znuPjuAfS4bbzuLdJxYFYnjFmi+IUuqVvsvfBh3qjX7CeG7oTw==
 
 "@kotlinspain/kotlin-moment@^2.24.0-pre.1":
   version "2.24.0-pre.1"
   resolved "https://registry.yarnpkg.com/@kotlinspain/kotlin-moment/-/kotlin-moment-2.24.0-pre.1.tgz#f36d15c2b426c768008cd38d0137ff84cfbe69c6"
   integrity sha512-wN8Vy2ovx62i/iqr8BXX6bQVgFs1683bjaLbSoPUTZ3QKYsoXFX6V9DmSAzgkL4OxJZ19ITxR5nbWuTRp/OY2w==
 
-"@kotlinspain/kotlin-react-intl@^2.8.0-pre.1":
-  version "2.8.0-pre.1"
-  resolved "https://registry.yarnpkg.com/@kotlinspain/kotlin-react-intl/-/kotlin-react-intl-2.8.0-pre.1.tgz#a27556385e56b76f9ea515e4aeca38ebb6e28898"
-  integrity sha512-pXDQj8/1iw/BFU+AtQzcJxCyTw95KFYlFRurudS9BdtKQx4WhoofKa+Yb2kEvWBew4j35FuIzTpEtdNEUXZ2YA==
+"@kotlinspain/kotlin-react-intl@^2.8.0-pre.3":
+  version "2.8.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@kotlinspain/kotlin-react-intl/-/kotlin-react-intl-2.8.0-pre.3.tgz#8a8edebfd616b6dbed189b443a8857045cdb8f66"
+  integrity sha512-rOmSiB+jAcZCvM+BkRwNIVOxhlENSm+pUPdpCQHQ5s0Za36urO5jxjAEyuNIV9hnkNMMwAq1WPLKEunNYROwZA==
 
 "@kotlinspain/kotlin-react-responsive@^6.1.1-pre.1":
   version "6.1.1-pre.1"

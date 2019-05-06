@@ -10,27 +10,40 @@ import antd.input.input
 import antd.menu.menu
 import antd.menu.menuDivider
 import antd.menu.menuItem
+import antd.menu.subMenu
 import antd.modal.modal
+import app.component.Component
 import app.component.auth.forgotpassword.forgotPassword
 import app.component.auth.signin.signIn
 import app.component.auth.signup.signUp
+import app.datasource.LanguageDiskDataStore
 import app.navigator.Navigator
+import data.repository.LanguageRepository
+import domain.model.Language
 import domain.model.User
+import kotlinext.js.jsObject
+import presentation.presenter.navbar.NavbarPresenter
 import presentation.view.NavbarView
 import react.*
 import react.dom.*
 import react.router.dom.routeLink
+import reactintl.IntlShape
+import reactintl.injectIntl
+import reactintl.message.formattedMessage
 import reactresponsive.mediaQuery
 
 interface NavbarProps : RProps {
+    var intl: IntlShape
     var navigator: Navigator
     var user: User
     var onSignIn: (User) -> Unit
     var onSignUp: (User) -> Unit
     var onSignOut: (User) -> Unit
+    var onChangeLanguage: (String) -> Unit
 }
 
 interface NavbarState : RState {
+    var languages: Array<Language>
     var isModalVisible: Boolean
     var isSignIn: Boolean
     var isSignUp: Boolean
@@ -39,7 +52,15 @@ interface NavbarState : RState {
     var isMenuGroupVisible: Boolean
 }
 
-class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
+class NavbarComponent : Component<NavbarProps, NavbarState, NavbarView>(), NavbarView {
+    override val presenter = NavbarPresenter(this, LanguageRepository(LanguageDiskDataStore()))
+
+    override fun updateLanguages(languages: Array<Language>) {
+        setState {
+            this.languages = languages
+        }
+    }
+
     override fun showModal(type: String) {
         when (type) {
             NavbarView.ModalType.SIGN_IN -> {
@@ -104,12 +125,17 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
     }
 
     override fun NavbarState.init() {
+        languages = emptyArray()
         isModalVisible = false
         isSignIn = false
         isSignUp = false
         isForgotPassword = false
         isSearchVisible = false
         isMenuGroupVisible = true
+    }
+
+    override fun componentDidMount() {
+        presenter.loadLanguages()
     }
 
     override fun RBuilder.render() {
@@ -146,7 +172,9 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                                 attrs.type = "search"
                                             }
                                         }
-                                        placeholder = "Search Kotlin ES"
+                                        placeholder = props.intl.formatMessage(jsObject {
+                                            id = "navbar.search-box.placeholder"
+                                        }, undefined)
                                         onBlur = {
                                             if (state.isSearchVisible) {
                                                 hideSearchInput()
@@ -169,7 +197,9 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                                 attrs.onClick = {
                                                     showModal(NavbarView.ModalType.SIGN_UP)
                                                 }
-                                                +"Sign up"
+                                                formattedMessage {
+                                                    attrs.id = "navbar.menu.sign-up"
+                                                }
                                             }
                                             button {
                                                 attrs {
@@ -178,12 +208,17 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                                         showModal(NavbarView.ModalType.SIGN_IN)
                                                     }
                                                 }
-                                                +"Sign in"
+                                                formattedMessage {
+                                                    attrs.id = "navbar.menu.sign-in"
+                                                }
                                             }
                                         }
                                     } else if (matches && props.user.isAuthenticated) {
                                         div("navbar-user-link") {
-                                            span { +"Welcome " }
+                                            +props.intl.formatMessage(jsObject {
+                                                id = "navbar.welcome"
+                                            }, undefined)
+                                            +" "
                                             routeLink("/user/${props.user.id}/account") { +props.user.username }
                                         }
                                     } else {
@@ -205,7 +240,10 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                             overlay = buildElement {
                                                 menu {
                                                     attrs.onClick = { param ->
-                                                        when (param.key) {
+                                                        val key = param.keyPath[0]
+                                                        val subKey = param.keyPath[1]
+
+                                                        when (key) {
                                                             NavbarView.MenuItem.GET_STARTED.key -> {
                                                                 showModal(NavbarView.ModalType.SIGN_UP)
                                                             }
@@ -219,6 +257,10 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                                                 props.navigator.openWindow("https://t.me/kotlinES")
                                                             }
                                                         }
+
+                                                        if (subKey == NavbarView.MenuItem.LANGUAGE.key) {
+                                                            props.onChangeLanguage.invoke(key)
+                                                        }
                                                     }
                                                     if (!matches && !props.user.isAuthenticated) {
                                                         menuItem {
@@ -226,7 +268,9 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                                             icon {
                                                                 attrs.type = "login"
                                                             }
-                                                            +"Get started"
+                                                            formattedMessage {
+                                                                attrs.id = "navbar.menu.get-started"
+                                                            }
                                                         }
                                                         menuDivider {}
                                                     }
@@ -236,16 +280,41 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
                                                             icon {
                                                                 attrs.type = "profile"
                                                             }
-                                                            +"My account"
+                                                            formattedMessage {
+                                                                attrs.id = "navbar.menu.account"
+                                                            }
                                                         }
                                                         menuItem {
                                                             attrs.key = NavbarView.MenuItem.SIGN_OUT.key
                                                             icon {
                                                                 attrs.type = "logout"
                                                             }
-                                                            +"Sign out"
+                                                            formattedMessage {
+                                                                attrs.id = "navbar.menu.sign-out"
+                                                            }
                                                         }
                                                         menuDivider {}
+                                                    }
+                                                    subMenu {
+                                                        attrs {
+                                                            key = NavbarView.MenuItem.LANGUAGE.key
+                                                            title = buildElement {
+                                                                span {
+                                                                    languageIcon()
+                                                                    formattedMessage {
+                                                                        attrs.id = "navbar.menu.language"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        state.languages.map { language ->
+                                                            menuItem {
+                                                                attrs.key = language.locale
+                                                                formattedMessage {
+                                                                    attrs.id = "navbar.menu.language.${language.locale}"
+                                                                }
+                                                            }
+                                                        }.toTypedArray()
                                                     }
                                                     menuItem {
                                                         attrs.key = NavbarView.MenuItem.TELEGRAM.key
@@ -335,4 +404,6 @@ class NavbarComponent : RComponent<NavbarProps, NavbarState>(), NavbarView {
     }
 }
 
-fun RBuilder.navbar(handler: RHandler<NavbarProps>) = child(NavbarComponent::class, handler)
+private val injectedNavbar = injectIntl(NavbarComponent::class.js.unsafeCast<JsClass<react.Component<NavbarProps, NavbarState>>>())
+
+fun RBuilder.navbar(handler: RHandler<NavbarProps>) = child(injectedNavbar, jsObject {}, handler)

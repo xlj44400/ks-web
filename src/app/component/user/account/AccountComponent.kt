@@ -11,11 +11,14 @@ import app.component.Component
 import app.datasource.UserDiskDataStore
 import data.repository.UserRepository
 import domain.model.User
+import kotlinext.js.jsObject
 import presentation.presenter.user.AccountPresenter
 import presentation.view.user.AccountView
 import react.*
 import react.dom.div
 import react.dom.span
+import reactintl.IntlShape
+import reactintl.injectIntl
 import reactresponsive.mediaQuery
 
 interface AccountRouteProps : RProps {
@@ -23,6 +26,7 @@ interface AccountRouteProps : RProps {
 }
 
 interface AccountProps : RProps {
+    var intl: IntlShape
     var userId: String
 }
 
@@ -76,7 +80,7 @@ class AccountComponent : Component<AccountProps, AccountState, AccountView>(), A
                                         size = "large"
                                     }
                                 }
-                                span { +state.username}
+                                span { +state.username }
                             }
                         }
                         col {
@@ -85,7 +89,9 @@ class AccountComponent : Component<AccountProps, AccountState, AccountView>(), A
                                 form {
                                     attrs.layout = "vertical"
                                     formItem {
-                                        attrs.label = "Email:"
+                                        attrs.label = props.intl.formatMessage(jsObject {
+                                            id = "account.detail.form-item-email.label"
+                                        }, undefined)
                                         input {
                                             attrs {
                                                 prefix = buildElement {
@@ -99,7 +105,9 @@ class AccountComponent : Component<AccountProps, AccountState, AccountView>(), A
                                         }
                                     }
                                     formItem {
-                                        attrs.label = "Password:"
+                                        attrs.label = props.intl.formatMessage(jsObject {
+                                            id = "account.detail.form-item-password.label"
+                                        }, undefined)
                                         input {
                                             attrs {
                                                 prefix = buildElement {
@@ -123,4 +131,6 @@ class AccountComponent : Component<AccountProps, AccountState, AccountView>(), A
     }
 }
 
-fun RBuilder.account(handler: RHandler<AccountProps>) = child(AccountComponent::class, handler)
+private val injectedAccount = injectIntl(AccountComponent::class.js.unsafeCast<JsClass<react.Component<AccountProps, RState>>>())
+
+fun RBuilder.account(handler: RHandler<AccountProps>) = child(injectedAccount, jsObject {}, handler)

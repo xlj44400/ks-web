@@ -6,53 +6,37 @@ import presentation.presenter.Presenter
 import presentation.view.auth.SignUpView
 
 class SignUpPresenter(view: SignUpView, private val userRepository: UserRepository) : Presenter<SignUpView>(view) {
-    object Error {
-        const val USERNAME_EMPTY = "Username can not be empty"
-        const val EMAIL_EMPTY = "Email can not be empty"
-        const val PASSWORD_EMPTY = "Password can not be empty"
-        const val REPEAT_PASSWORD_EMPTY = "Repeat password can not be empty"
-        const val USER_ALREADY_EXIST = "User with that username already exists"
-        const val PASSWORD_NOT_MATCH = "Password does not match"
+    enum class Error(val key: String) {
+        USERNAME_EMPTY("username-empty"),
+        EMAIL_EMPTY("email-empty"),
+        PASSWORD_EMPTY("password-empty"),
+        REPEAT_PASSWORD_EMPTY("repeat-password-empty"),
+        USER_ALREADY_EXIST("user-already-exist"),
+        PASSWORD_NOT_MATCH("password-not-match")
     }
 
     fun validateUsername(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updateUsername(value, true)
-        } else {
-            view.updateUsername(value,false, Error.USERNAME_EMPTY)
-        }
+        view.updateUsername(value,isValid, Error.USERNAME_EMPTY.key)
     }
 
     fun validateEmail(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updateEmail(value, true)
-        } else {
-            view.updateEmail(value,false, Error.EMAIL_EMPTY)
-        }
+        view.updateEmail(value,isValid, Error.EMAIL_EMPTY.key)
     }
 
     fun validatePassword(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updatePassword(value, true)
-        } else {
-            view.updatePassword(value,false, Error.PASSWORD_EMPTY)
-        }
+        view.updatePassword(value,isValid, Error.PASSWORD_EMPTY.key)
     }
 
     fun validateRepeatPassword(value: String) {
         val isValid = value.isNotEmpty()
 
-        if (isValid) {
-            view.updateRepeatPassword(value, true)
-        } else {
-            view.updateRepeatPassword(value,false, Error.REPEAT_PASSWORD_EMPTY)
-        }
+        view.updateRepeatPassword(value,isValid, Error.REPEAT_PASSWORD_EMPTY.key)
     }
 
     fun signUp(user: User, password: String) {
@@ -61,10 +45,10 @@ class SignUpPresenter(view: SignUpView, private val userRepository: UserReposito
         val foundUser = userRepository.findByUsername(user.username)
 
         if (foundUser != null) {
-            view.showError(Error.USER_ALREADY_EXIST)
+            view.showError(Error.USER_ALREADY_EXIST.key)
         } else {
             if (user.password != password) {
-                view.showError(Error.PASSWORD_NOT_MATCH)
+                view.showError(Error.PASSWORD_NOT_MATCH.key)
             } else {
                 view.onSignUp(user)
             }

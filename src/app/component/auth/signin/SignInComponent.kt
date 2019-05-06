@@ -10,6 +10,7 @@ import app.component.Component
 import app.datasource.UserDiskDataStore
 import data.repository.UserRepository
 import domain.model.User
+import kotlinext.js.jsObject
 import kotlinx.html.js.onClickFunction
 import presentation.presenter.auth.SignInPresenter
 import presentation.view.auth.SignInView
@@ -17,8 +18,12 @@ import react.*
 import react.dom.a
 import react.dom.div
 import react.dom.span
+import reactintl.IntlShape
+import reactintl.injectIntl
+import reactintl.message.formattedMessage
 
 interface SignInProps : RProps {
+    var intl: IntlShape
     var onSignIn: (User) -> Unit
     var onSignUpLinkClick: () -> Unit
     var onForgotPasswordLinkClick: () -> Unit
@@ -37,24 +42,30 @@ interface SignInState : RState {
 class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignInView {
     override val presenter = SignInPresenter(this, UserRepository(UserDiskDataStore()))
 
-    override fun updateUsername(value: String, isValid: Boolean, error: String?) {
+    override fun updateUsername(value: String, isValid: Boolean, errorKey: String) {
         setState {
             username = value
             isValidUsername = isValid
-            usernameError = error
+            usernameError = props.intl.formatMessage(jsObject {
+                id = "sign-in.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun updatePassword(value: String, isValid: Boolean, error: String?) {
+    override fun updatePassword(value: String, isValid: Boolean, errorKey: String) {
         setState {
             password = value
             isValidPassword = isValid
-            passwordError = error
+            passwordError = props.intl.formatMessage(jsObject {
+                id = "sign-in.input-error.$errorKey"
+            }, undefined)
         }
     }
 
-    override fun showError(error: String) {
-        Message.error(error)
+    override fun showError(errorKey: String) {
+        Message.error(props.intl.formatMessage(jsObject {
+            id = "sign-in.message-error.$errorKey"
+        }, undefined))
     }
 
     override fun showLoading() {
@@ -83,7 +94,9 @@ class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignI
 
     override fun RBuilder.render() {
         div("sign-in-modal-header") {
-            span { +"Welcome back to Kotlin ES" }
+            formattedMessage {
+                attrs.id = "sign-in.header.title"
+            }
         }
         div("sign-in-modal-content") {
             form {
@@ -91,7 +104,7 @@ class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignI
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidUsername) "success" else "error"
-                        help = state.usernameError
+                        help = if (state.isValidUsername) null else state.usernameError
                     }
                     input {
                         attrs {
@@ -100,7 +113,9 @@ class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignI
                                     attrs.type = "user"
                                 }
                             }
-                            placeholder = "Username"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id =  "sign-in.content.input-username.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -114,7 +129,7 @@ class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignI
                 formItem {
                     attrs {
                         validateStatus = if (state.isValidPassword) "success" else "error"
-                        help = state.passwordError
+                        help = if (state.isValidPassword) null else state.passwordError
                     }
                     input {
                         attrs {
@@ -124,7 +139,9 @@ class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignI
                                 }
                             }
                             type = "password"
-                            placeholder = "Password"
+                            placeholder = props.intl.formatMessage(jsObject {
+                                id =  "sign-in.content.input-password.placeholder"
+                            }, undefined)
                             onChange = { event ->
                                 event.persist()
 
@@ -140,7 +157,9 @@ class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignI
                         attrs.onClickFunction = {
                             props.onForgotPasswordLinkClick.invoke()
                         }
-                        +"Forgot password?"
+                        formattedMessage {
+                            attrs.id = "sign-in.content.link-forgot-password"
+                        }
                     }
                 }
             }
@@ -158,19 +177,27 @@ class SignInComponent : Component<SignInProps, SignInState, SignInView>(), SignI
                         }
                     }
                 }
-                +"Sign in"
+                formattedMessage {
+                    attrs.id = "sign-in.footer.button.text"
+                }
             }
             span {
-                +"New in Kotlin ES?"
+                +props.intl.formatMessage(jsObject {
+                    id =  "sign-in.footer.sign-up.text"
+                }, undefined)
                 a {
                     attrs.onClickFunction = {
                         props.onSignUpLinkClick.invoke()
                     }
-                    +"Sign up"
+                    formattedMessage {
+                        attrs.id = "sign-in.footer.link-sign-up"
+                    }
                 }
             }
         }
     }
 }
 
-fun RBuilder.signIn(handler: RHandler<SignInProps>) = child(SignInComponent::class, handler)
+private val injectedSignIn = injectIntl(SignInComponent::class.js.unsafeCast<JsClass<react.Component<SignInProps, SignInState>>>())
+
+fun RBuilder.signIn(handler: RHandler<SignInProps>) = child(injectedSignIn, jsObject {}, handler)
