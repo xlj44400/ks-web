@@ -41,12 +41,10 @@ class TelegramSvgComponent : RComponent<RProps, RState>() {
     }
 }
 
-private fun RBuilder.telegramSvg() = child(TelegramSvgComponent::class) {}
-
 class TelegramIconComponent : RComponent<IconProps, RState>() {
     override fun RBuilder.render() {
         icon {
-            attrs.component = telegramSvg().asDynamic().type.unsafeCast<Any>()
+            attrs.component = TelegramSvgComponent::class.js
         }
     }
 }
