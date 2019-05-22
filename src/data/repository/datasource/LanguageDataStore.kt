@@ -1,6 +1,6 @@
-package data.datasource
+package data.repository.datasource
 
-import domain.model.Language
+import domain.Language
 
 interface LanguageDataStore {
     fun findAll(): Array<Language>

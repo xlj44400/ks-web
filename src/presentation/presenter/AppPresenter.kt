@@ -1,11 +1,11 @@
 package presentation.presenter
 
-import app.datasource.AuthDataStore
+import app.repository.datasource.AuthDataStore
 import app.localization.*
 import data.repository.LanguageRepository
 import data.repository.UserRepository
-import domain.model.Language
-import domain.model.User
+import domain.Language
+import domain.User
 import kotlinext.js.jsObject
 import presentation.view.AppView
 

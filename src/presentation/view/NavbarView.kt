@@ -1,6 +1,6 @@
 package presentation.view
 
-import domain.model.Language
+import domain.Language
 
 interface NavbarView : View {
     enum class MenuItem(val key: String) {

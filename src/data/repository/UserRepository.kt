@@ -1,7 +1,7 @@
 package data.repository
 
-import data.datasource.UserDataStore
-import domain.model.User
+import data.repository.datasource.UserDataStore
+import domain.User
 
 class UserRepository(private val userDataStore: UserDataStore) {
     fun findById(id: String): User? {

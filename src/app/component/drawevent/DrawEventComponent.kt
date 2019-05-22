@@ -6,7 +6,7 @@ import antd.modal.modal
 import app.component.Component
 import app.component.drawevent.countdown.countdown
 import app.component.drawevent.subscribe.subscribe
-import app.datasource.UserDiskDataStore
+import app.repository.datasource.UserDiskDataStore
 import data.repository.UserRepository
 import kotlinext.js.jsObject
 import presentation.presenter.drawevent.DrawEventPresenter

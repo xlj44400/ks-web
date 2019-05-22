@@ -16,11 +16,11 @@ import app.component.Component
 import app.component.auth.forgotpassword.forgotPassword
 import app.component.auth.signin.signIn
 import app.component.auth.signup.signUp
-import app.datasource.LanguageDiskDataStore
+import app.repository.datasource.LanguageDiskDataStore
 import app.navigator.Navigator
 import data.repository.LanguageRepository
-import domain.model.Language
-import domain.model.User
+import domain.Language
+import domain.User
 import kotlinext.js.jsObject
 import presentation.presenter.navbar.NavbarPresenter
 import presentation.view.NavbarView

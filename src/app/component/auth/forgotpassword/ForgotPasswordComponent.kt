@@ -7,7 +7,7 @@ import antd.icon.icon
 import antd.input.input
 import antd.message.message as Message
 import app.component.Component
-import app.datasource.UserDiskDataStore
+import app.repository.datasource.UserDiskDataStore
 import data.repository.UserRepository
 import kotlinext.js.jsObject
 import kotlinx.html.js.onClickFunction

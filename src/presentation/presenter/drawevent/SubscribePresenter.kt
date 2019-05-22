@@ -1,7 +1,7 @@
 package presentation.presenter.drawevent
 
 import data.repository.UserRepository
-import domain.model.User
+import domain.User
 import presentation.presenter.Presenter
 import presentation.view.drawevent.SubscribeView
 

@@ -1,6 +1,6 @@
 package presentation.view.user
 
-import domain.model.User
+import domain.User
 import presentation.view.View
 
 interface AccountView : View {

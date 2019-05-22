@@ -1,7 +1,7 @@
-package app.datasource
+package app.repository.datasource
 
-import data.datasource.LanguageDataStore
-import domain.model.Language
+import data.repository.datasource.LanguageDataStore
+import domain.Language
 import kotlin.browser.localStorage
 
 class LanguageDiskDataStore : LanguageDataStore {

@@ -8,9 +8,9 @@ import antd.grid.row
 import antd.icon.icon
 import antd.input.input
 import app.component.Component
-import app.datasource.UserDiskDataStore
+import app.repository.datasource.UserDiskDataStore
 import data.repository.UserRepository
-import domain.model.User
+import domain.User
 import kotlinext.js.jsObject
 import presentation.presenter.user.AccountPresenter
 import presentation.view.user.AccountView
