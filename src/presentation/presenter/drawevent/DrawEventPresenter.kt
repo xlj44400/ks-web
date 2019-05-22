@@ -14,7 +14,7 @@ class DrawEventPresenter(view: DrawEventView, private val userRepository: UserRe
         val subscribeUser = User.create(user.username, user.email, "")
         subscribeUser.hasTelegram = true
 
-        userRepository.add(subscribeUser)
+        userRepository.create(subscribeUser)
 
         view.showMessage(Message.SUBSCRIBED.key)
     }
