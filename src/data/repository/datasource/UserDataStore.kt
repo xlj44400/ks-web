@@ -1,6 +1,6 @@
-package data.datasource
+package data.repository.datasource
 
-import domain.model.User
+import domain.User
 
 interface UserDataStore {
     fun findById(id: String): User?

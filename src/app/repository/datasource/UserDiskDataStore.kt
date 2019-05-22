@@ -1,7 +1,7 @@
-package app.datasource
+package app.repository.datasource
 
-import data.datasource.UserDataStore
-import domain.model.User
+import data.repository.datasource.UserDataStore
+import domain.User
 import kotlin.browser.localStorage
 
 class UserDiskDataStore : UserDataStore {

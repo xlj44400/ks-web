@@ -9,9 +9,9 @@ import app.component.home.HomeComponent
 import app.component.navbar.*
 import app.component.user.account.AccountRouteProps
 import app.component.user.account.account
-import app.datasource.AuthDataStore
-import app.datasource.LanguageDiskDataStore
-import app.datasource.UserDiskDataStore
+import app.repository.datasource.AuthDataStore
+import app.repository.datasource.LanguageDiskDataStore
+import app.repository.datasource.UserDiskDataStore
 import app.localization.EN_US
 import app.localization.Locale
 import app.localization.enLocale
@@ -19,7 +19,7 @@ import app.localization.enMessages
 import app.navigator.Navigator
 import data.repository.LanguageRepository
 import data.repository.UserRepository
-import domain.model.User
+import domain.User
 import kotlinext.js.jsObject
 import presentation.presenter.AppPresenter
 import presentation.view.AppView

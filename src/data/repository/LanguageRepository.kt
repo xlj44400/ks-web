@@ -1,7 +1,7 @@
 package data.repository
 
-import data.datasource.LanguageDataStore
-import domain.model.Language
+import data.repository.datasource.LanguageDataStore
+import domain.Language
 
 class LanguageRepository(private val languageDataStore: LanguageDataStore) {
     fun findAll(): Array<Language> {

@@ -1,4 +1,4 @@
-package app.datasource
+package app.repository.datasource
 
 import kotlin.browser.localStorage
 
