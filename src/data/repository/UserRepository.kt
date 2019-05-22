@@ -4,23 +4,13 @@ import data.repository.datasource.UserDataStore
 import domain.User
 
 class UserRepository(private val userDataStore: UserDataStore) {
-    fun findById(id: String): User? {
-        return userDataStore.findById(id)
-    }
+    fun findById(id: String): User? = userDataStore.findById(id)
 
-    fun findByUsername(username: String, hasTelegram: Boolean = false): User? {
-        return userDataStore.findByUsername(username, hasTelegram)
-    }
+    fun findByUsername(username: String, hasTelegram: Boolean = false): User? = userDataStore.findByUsername(username, hasTelegram)
 
-    fun findByEmail(email: String): User? {
-        return userDataStore.findByEmail(email)
-    }
+    fun findByEmail(email: String): User? = userDataStore.findByEmail(email)
 
-    fun add(user: User) {
-        userDataStore.add(user)
-    }
+    fun create(user: User) = userDataStore.create(user)
 
-    fun update(user: User) {
-        userDataStore.update(user)
-    }
+    fun update(user: User) = userDataStore.update(user)
 }

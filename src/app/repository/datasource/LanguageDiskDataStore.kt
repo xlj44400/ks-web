@@ -5,49 +5,39 @@ import domain.Language
 import kotlin.browser.localStorage
 
 class LanguageDiskDataStore : LanguageDataStore {
-    override fun findAll(): Array<Language> {
-        val languagesJson = localStorage.getItem("languages")
+    override fun findAll(): Array<Language> = localStorage.getItem("languages")?.let {
+        JSON.parse<Array<Language>>(it)
+    } ?: let {
+        val languages = arrayOf(Language.create("en-US", true), Language.create("es-ES"))
 
-        return if (languagesJson != null) {
-            JSON.parse(languagesJson)
-        } else {
-            val languages = arrayOf(Language.create("en-US", true), Language.create("es-ES"))
+        localStorage.setItem("languages", JSON.stringify(languages))
 
-            localStorage.setItem("languages", JSON.stringify(languages))
-
-            languages
-        }
+        languages
     }
 
-    override fun findById(id: String): Language? {
-        return localStorage.getItem("languages")?.let {
-            JSON.parse<Array<Language>>(it).find { l -> l.id == id }
-        }
+    override fun findById(id: String): Language? = localStorage.getItem("languages")?.let {
+        JSON.parse<Array<Language>>(it).find { l -> l.id == id }
     }
 
-    override fun findByLocale(locale: String): Language? {
-        return localStorage.getItem("languages")?.let {
-            JSON.parse<Array<Language>>(it).find { l -> l.locale == locale }
-        }
+    override fun findByLocale(locale: String): Language? = localStorage.getItem("languages")?.let {
+        JSON.parse<Array<Language>>(it).find { l -> l.locale == locale }
     }
 
-    override fun update(language: Language) {
-        localStorage.getItem("languages")?.let {
-            val languages = mutableListOf<Language>()
+    override fun update(language: Language) = localStorage.getItem("languages")?.let {
+        val languages = mutableListOf<Language>()
 
-            JSON.parse<Array<Language>>(it).forEach { l ->
-                if (l.locale == language.locale) {
-                    l.isActive = language.isActive
-                } else {
-                    l.isActive = false
-                }
-
-                languages.add(l)
+        JSON.parse<Array<Language>>(it).forEach { l ->
+            if (l.locale == language.locale) {
+                l.isActive = language.isActive
+            } else {
+                l.isActive = false
             }
 
-            languages.toTypedArray()
-        }?.let {
-            localStorage.setItem("languages", JSON.stringify(it))
+            languages.add(l)
         }
-    }
+
+        languages.toTypedArray()
+
+        localStorage.setItem("languages", JSON.stringify(languages))
+    }!!
 }

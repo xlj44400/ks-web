@@ -60,7 +60,7 @@ class AppPresenter(view: AppView,
         val newUser = User.create(user.username, user.email, user.password)
         newUser.isAuthenticated = true
 
-        userRepository.add(newUser)
+        userRepository.create(newUser)
 
         authDataStore.setAuthToken(newUser.id)
 
