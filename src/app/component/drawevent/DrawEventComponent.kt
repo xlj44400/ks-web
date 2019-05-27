@@ -1,15 +1,13 @@
 package app.component.drawevent
 
 import antd.button.button
-import antd.message.message as Message
 import antd.modal.modal
-import app.component.Component
+import antd.message.message as Message
 import app.component.drawevent.countdown.countdown
 import app.component.drawevent.subscribe.subscribe
-import app.repository.datasource.UserDiskDataStore
-import data.repository.UserRepository
+import domain.Subscription
+import domain.User
 import kotlinext.js.jsObject
-import presentation.presenter.drawevent.DrawEventPresenter
 import presentation.view.drawevent.DrawEventView
 import react.*
 import react.dom.div
@@ -21,6 +19,9 @@ import kotlin.js.Date
 
 interface DrawEventProps : RProps {
     var intl: IntlShape
+    var user: User
+    var onSubscribe: (Subscription) -> Unit
+    var onUnsubscribe: (Subscription) -> Unit
 }
 
 interface DrawEventState : RState {
@@ -28,9 +29,7 @@ interface DrawEventState : RState {
     var isEventEnded: Boolean
 }
 
-class DrawEventComponent : Component<DrawEventProps, DrawEventState, DrawEventView>(), DrawEventView {
-    override val presenter = DrawEventPresenter(this, UserRepository(UserDiskDataStore()))
-
+class DrawEventComponent : RComponent<DrawEventProps, DrawEventState>(), DrawEventView {
     override fun showSubscribeModal() {
         setState {
             isSubscribeModalVisible = true
@@ -43,7 +42,7 @@ class DrawEventComponent : Component<DrawEventProps, DrawEventState, DrawEventVi
         }
     }
 
-    override fun hideSubscribeButton() {
+    override fun onEventEnded() {
         setState {
             isEventEnded = true
         }
@@ -75,21 +74,35 @@ class DrawEventComponent : Component<DrawEventProps, DrawEventState, DrawEventVi
                     attrs {
                         date = Date("2019-07-07T19:00:00")
                         onOver = {
-                            hideSubscribeButton()
+                            onEventEnded()
                         }
                     }
                 }
                 if (!state.isEventEnded) {
-                    button {
-                        attrs {
-                            type = "primary"
-                            size = "large"
-                            onClick = {
-                                showSubscribeModal()
-                            }
-                        }
+                    if (!props.user.isAuthenticated) {
                         formattedMessage {
-                            attrs.id = "draw-event.content.button.text"
+                            attrs.id = "draw-event.content.sign-up.text"
+                        }
+                    } else {
+                        button {
+                            attrs {
+                                type = "primary"
+                                size = "large"
+                                onClick = {
+                                    if (props.user.isSubscribed) {
+                                        props.onUnsubscribe(props.user.subscription!!)
+                                    } else {
+                                        showSubscribeModal()
+                                    }
+                                }
+                            }
+                            formattedMessage {
+                                if (props.user.isSubscribed) {
+                                    attrs.id = "draw-event.content.unsubscribe-button.text"
+                                } else {
+                                    attrs.id = "draw-event.content.subscribe-button.text"
+                                }
+                            }
                         }
                     }
                 } else {
@@ -117,8 +130,8 @@ class DrawEventComponent : Component<DrawEventProps, DrawEventState, DrawEventVi
 
             subscribe {
                 attrs {
-                    onSubscribe = { user ->
-                        presenter.subscribe(user)
+                    onSubscribe = {
+                        props.onSubscribe(it)
 
                         hideSubscribeModal()
                     }
@@ -128,6 +141,6 @@ class DrawEventComponent : Component<DrawEventProps, DrawEventState, DrawEventVi
     }
 }
 
-private val injectedDrawEvent = injectIntl(DrawEventComponent::class.js.unsafeCast<JsClass<react.Component<DrawEventProps, DrawEventState>>>())
+private val injectedDrawEvent = injectIntl(DrawEventComponent::class.js.unsafeCast<JsClass<Component<DrawEventProps, DrawEventState>>>())
 
 fun RBuilder.drawEvent(handler: RHandler<DrawEventProps>) = child(injectedDrawEvent, jsObject {}, handler)

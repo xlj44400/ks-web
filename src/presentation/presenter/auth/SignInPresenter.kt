@@ -29,7 +29,6 @@ class SignInPresenter(view: SignInView, private val userRepository: UserReposito
         view.showLoading()
 
         userRepository.findOne(UserQuery(username = username))?.let {
-            console.log(it)
             if (it.password != password) {
                 view.showError(Error.PASSWORD_NOT_MATCH.key)
             } else {
