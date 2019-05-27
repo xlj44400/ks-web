@@ -41,9 +41,9 @@ class AccountComponent : Component<AccountProps, AccountState, AccountView>(), A
 
     override fun updateAccountData(user: User) {
         setState {
-            username = user.username
-            email = user.email
-            password = user.password
+            username = user.username!!
+            email = user.email!!
+            password = user.password!!
         }
     }
 

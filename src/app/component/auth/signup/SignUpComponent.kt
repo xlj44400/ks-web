@@ -240,11 +240,7 @@ class SignUpComponent : Component<SignUpProps, SignUpState, SignUpView>(), SignU
                     type = "primary"
                     onClick = {
                         if (state.isValidUsername && state.isValidEmail && state.isValidPassword && state.isValidRepeatPassword) {
-                            val user = User().apply {
-                                username = state.username
-                                email = state.email
-                                password = state.password
-                            }
+                            val user = User(state.username, state.email, state.password)
 
                             presenter.signUp(user, state.repeatPassword)
                         } else {

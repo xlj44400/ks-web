@@ -154,10 +154,7 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                     type = "primary"
                     onClick = {
                         if (state.isValidUsername && state.isValidEmail) {
-                            val user = User().apply {
-                                username = state.username
-                                email = state.email
-                            }
+                            val user = User(state.username, state.email)
 
                             presenter.subscribe(user)
                         } else {

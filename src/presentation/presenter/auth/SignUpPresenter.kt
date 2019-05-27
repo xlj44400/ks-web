@@ -1,5 +1,6 @@
 package presentation.presenter.auth
 
+import data.repository.UserQuery
 import data.repository.UserRepository
 import domain.User
 import presentation.presenter.Presenter
@@ -11,26 +12,26 @@ class SignUpPresenter(view: SignUpView, private val userRepository: UserReposito
         EMAIL_EMPTY("email-empty"),
         PASSWORD_EMPTY("password-empty"),
         REPEAT_PASSWORD_EMPTY("repeat-password-empty"),
-        USER_ALREADY_EXIST("user-already-exist"),
+        USER_ALREADY_REGISTERED("user-already-registered"),
         PASSWORD_NOT_MATCH("password-not-match")
     }
 
     fun validateUsername(value: String) {
         val isValid = value.isNotEmpty()
 
-        view.updateUsername(value,isValid, Error.USERNAME_EMPTY.key)
+        view.updateUsername(value, isValid, Error.USERNAME_EMPTY.key)
     }
 
     fun validateEmail(value: String) {
         val isValid = value.isNotEmpty()
 
-        view.updateEmail(value,isValid, Error.EMAIL_EMPTY.key)
+        view.updateEmail(value, isValid, Error.EMAIL_EMPTY.key)
     }
 
     fun validatePassword(value: String) {
         val isValid = value.isNotEmpty()
 
-        view.updatePassword(value,isValid, Error.PASSWORD_EMPTY.key)
+        view.updatePassword(value, isValid, Error.PASSWORD_EMPTY.key)
     }
 
     fun validateRepeatPassword(value: String) {
@@ -42,18 +43,12 @@ class SignUpPresenter(view: SignUpView, private val userRepository: UserReposito
     fun signUp(user: User, password: String) {
         view.showLoading()
 
-        val foundUser = userRepository.findByUsername(user.username)
-
-        if (foundUser != null) {
-            view.showError(Error.USER_ALREADY_EXIST.key)
+        userRepository.findOne(UserQuery(username = user.username!!, email = user.email!!))?.let {
+            view.showError(Error.USER_ALREADY_REGISTERED.key)
+        } ?: if (user.password != password) {
+            view.showError(Error.PASSWORD_NOT_MATCH.key)
         } else {
-            if (user.password != password) {
-                view.showError(Error.PASSWORD_NOT_MATCH.key)
-            } else {
-                view.onSignUp(user)
-            }
+            view.onSignUp(user)
         }
-
-        view.hideLoading()
     }
 }

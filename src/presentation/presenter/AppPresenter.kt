@@ -43,22 +43,17 @@ class AppPresenter(view: AppView,
     }
 
     fun checkUserSigned() {
-        val user = authDataStore.getAuthToken()?.let {
+        authDataStore.getAuthToken()?.let {
             userRepository.findById(it)
-        }
+        }?.let {
+            it.authenticate()
 
-        if (user != null) {
-            user.isAuthenticated = true
-
-            view.updateAuth(user)
-        } else {
-            view.updateAuth(User())
-        }
+            view.updateAuth(it)
+        } ?: view.updateAuth(User())
     }
 
     fun signUp(user: User) {
-        val newUser = User.create(user.username, user.email, user.password)
-        newUser.isAuthenticated = true
+        val newUser = User(user.username, user.email, user.password).authenticate()
 
         userRepository.create(newUser)
 
@@ -68,7 +63,7 @@ class AppPresenter(view: AppView,
     }
 
     fun signIn(user: User) {
-        user.isAuthenticated = true
+        user.authenticate()
 
         userRepository.update(user)
 
@@ -78,7 +73,7 @@ class AppPresenter(view: AppView,
     }
 
     fun signOut(user: User) {
-        user.isAuthenticated = false
+        user.authenticate(false)
 
         userRepository.update(user)
 

@@ -1,11 +1,11 @@
 package data.repository.datasource
 
-import domain.User
+import data.entity.UserEntity
+import data.repository.UserQuery
 
 interface UserDataStore {
-    fun findById(id: String): User?
-    fun findByUsername(username: String, hasTelegram: Boolean): User?
-    fun findByEmail(email: String): User?
-    fun create(user: User)
-    fun update(user: User)
+    fun findById(id: String): UserEntity?
+    fun findOne(query: UserQuery): UserEntity?
+    fun create(user: UserEntity)
+    fun update(user: UserEntity)
 }
