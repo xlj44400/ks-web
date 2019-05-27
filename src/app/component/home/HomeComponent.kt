@@ -1,18 +1,29 @@
 package app.component.home
 
 import app.component.drawevent.drawEvent
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import domain.Subscription
+import domain.User
+import react.*
 import react.dom.div
 
-class HomeComponent : RComponent<RProps, RState>() {
+interface HomeProps : RProps {
+    var user: User
+    var onEventSubscribe: (Subscription) -> Unit
+    var onEventUnsubscribe: (Subscription) -> Unit
+}
+
+class HomeComponent : RComponent<HomeProps, RState>() {
     override fun RBuilder.render() {
         div("home-container") {
-            drawEvent {}
+            drawEvent {
+                attrs {
+                    user = props.user
+                    onSubscribe = props.onEventSubscribe
+                    onUnsubscribe = props.onEventUnsubscribe
+                }
+            }
         }
     }
 }
 
-fun RBuilder.home() = child(HomeComponent::class) {}
+fun RBuilder.home(handler: RHandler<HomeProps>) = child(HomeComponent::class, handler)

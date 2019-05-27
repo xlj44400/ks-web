@@ -7,14 +7,12 @@ import kotlin.browser.localStorage
 
 class UserDiskDataStore : UserDataStore {
     override fun findById(id: String): UserEntity? = localStorage.getItem("users")?.let {
-        JSON.parse<Array<UserEntity>>(it).find { u -> !u.isSubscribed && u.id == id }
+        JSON.parse<Array<UserEntity>>(it).find { u -> u.id == id }
     }
 
     override fun findOne(query: UserQuery): UserEntity? = localStorage.getItem("users")?.let {
         JSON.parse<Array<UserEntity>>(it).singleOrNull { u ->
-            var condition = query.isSubscribed?.let { isSubscribed ->
-                (isSubscribed == u.isSubscribed)
-            } ?: !u.isSubscribed
+            var condition = true
 
             condition = if (!query.username.isNullOrEmpty() && !query.email.isNullOrEmpty()) {
                 condition && (query.username == u.username || query.email == u.email)
@@ -28,6 +26,10 @@ class UserDiskDataStore : UserDataStore {
                 } ?: condition
 
                 condition
+            }
+
+            query.isSubscribed?.let { isSubscribed ->
+               condition = condition && (isSubscribed == (u.subscription != null))
             }
 
             condition
@@ -52,7 +54,8 @@ class UserDiskDataStore : UserDataStore {
         val users = mutableListOf<UserEntity>()
 
         JSON.parse<Array<UserEntity>>(it).forEach { u ->
-            if (u.id == user.id && !u.isSubscribed) {
+            if (u.id == user.id) {
+                u.subscription = user.subscription
                 u.isAuthenticated = user.isAuthenticated
             }
 

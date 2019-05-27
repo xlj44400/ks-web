@@ -5,6 +5,7 @@ import app.localization.*
 import data.repository.LanguageRepository
 import data.repository.UserRepository
 import domain.Language
+import domain.Subscription
 import domain.User
 import kotlinext.js.jsObject
 import presentation.view.AppView
@@ -13,6 +14,11 @@ class AppPresenter(view: AppView,
                    private val languageRepository: LanguageRepository,
                    private val userRepository: UserRepository,
                    private val authDataStore: AuthDataStore) : Presenter<AppView>(view) {
+    enum class Message(val key: String) {
+        USER_SUBSCRIBED("user-subscribed"),
+        USER_UNSUBSCRIBED("user-unsubscribed")
+    }
+
     fun checkCurrentLocale(defaultLocale: String) {
         val language = languageRepository.findAll().find { l -> l.isActive }
 
@@ -48,18 +54,18 @@ class AppPresenter(view: AppView,
         }?.let {
             it.authenticate()
 
-            view.updateAuth(it)
-        } ?: view.updateAuth(User())
+            view.updateUser(it)
+        } ?: view.updateUser(User("", "", "", ""))
     }
 
     fun signUp(user: User) {
-        val newUser = User(user.username, user.email, user.password).authenticate()
+        user.authenticate()
 
-        userRepository.create(newUser)
+        userRepository.create(user)
 
-        authDataStore.setAuthToken(newUser.id)
+        authDataStore.setAuthToken(user.id)
 
-        view.updateAuth(newUser)
+        view.updateUser(user)
     }
 
     fun signIn(user: User) {
@@ -69,16 +75,36 @@ class AppPresenter(view: AppView,
 
         authDataStore.setAuthToken(user.id)
 
-        view.updateAuth(user)
+        view.updateUser(user)
     }
 
     fun signOut(user: User) {
-        user.authenticate(false)
+        user.deauthenticate()
 
         userRepository.update(user)
 
         authDataStore.removeAuthToken()
 
-        view.updateAuth(user)
+        view.updateUser(user)
+    }
+
+    fun subscribe(user: User, subscription: Subscription) {
+        user.subscribe(subscription)
+
+        userRepository.update(user)
+
+        view.updateUser(user)
+
+        view.showMessage(Message.USER_SUBSCRIBED.key)
+    }
+
+    fun unsubscribe(user: User, subscription: Subscription) {
+        user.unsubscribe(subscription)
+
+        userRepository.update(user)
+
+        view.updateUser(user)
+
+        view.showMessage(Message.USER_UNSUBSCRIBED.key)
     }
 }

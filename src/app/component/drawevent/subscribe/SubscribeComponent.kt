@@ -9,7 +9,7 @@ import antd.message.message as Message
 import app.component.Component
 import app.repository.datasource.UserDiskDataStore
 import data.repository.UserRepository
-import domain.User
+import domain.Subscription
 import kotlinext.js.jsObject
 import presentation.presenter.drawevent.SubscribePresenter
 import presentation.view.drawevent.SubscribeView
@@ -21,37 +21,24 @@ import reactintl.message.formattedMessage
 
 interface SubscribeProps : RProps {
     var intl: IntlShape
-    var onSubscribe: (User) -> Unit
+    var onSubscribe: (Subscription) -> Unit
 }
 
 interface SubscribeState : RState {
-    var username: String
-    var email: String
-    var isValidUsername: Boolean
-    var isValidEmail: Boolean
-    var usernameError: String?
-    var emailError: String?
+    var address: String
+    var isValidAddress: Boolean
+    var addressError: String?
     var isLoading: Boolean
 }
 
 class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeView>(), SubscribeView {
     override val presenter = SubscribePresenter(this, UserRepository(UserDiskDataStore()))
 
-    override fun updateUsername(value: String, isValid: Boolean, errorKey: String) {
+    override fun updateAddress(value: String, isValid: Boolean, errorKey: String) {
         setState {
-            username = value
-            isValidUsername = isValid
-            usernameError = props.intl.formatMessage(jsObject {
-                id = "subscribe.input-error.$errorKey"
-            }, undefined)
-        }
-    }
-
-    override fun updateEmail(value: String, isValid: Boolean, errorKey: String) {
-        setState {
-            email = value
-            isValidEmail = isValid
-            emailError = props.intl.formatMessage(jsObject {
+            address = value
+            isValidAddress= isValid
+            addressError = props.intl.formatMessage(jsObject {
                 id = "subscribe.input-error.$errorKey"
             }, undefined)
         }
@@ -75,15 +62,9 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
         }
     }
 
-    override fun onSubscribe(user: User) {
-        props.onSubscribe(user)
-    }
-
     override fun SubscribeState.init() {
-        username = ""
-        email = ""
-        isValidUsername = false
-        isValidEmail = false
+        address = ""
+        isValidAddress = false
         isLoading = false
     }
 
@@ -98,50 +79,25 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                 attrs.layout = "vertical"
                 formItem {
                     attrs {
-                        validateStatus = if (state.isValidUsername) "success" else "error"
-                        help = if (state.isValidUsername) null else state.usernameError
+                        validateStatus = if (state.isValidAddress) "success" else "error"
+                        help = if (state.isValidAddress) null else state.addressError
                     }
                     input {
                         attrs {
                             prefix = buildElement {
                                 icon {
-                                    attrs.type = "user"
+                                    attrs.type = "global"
                                 }
                             }
                             placeholder = props.intl.formatMessage(jsObject {
-                                id = "subscribe.content.input-username.placeholder"
+                                id = "subscribe.content.input-address.placeholder"
                             }, undefined)
                             onChange = { event ->
                                 event.persist()
 
                                 val inputValue = event.target.asDynamic().value as String
 
-                                presenter.validateUsername(inputValue)
-                            }
-                        }
-                    }
-                }
-                formItem {
-                    attrs {
-                        validateStatus = if (state.isValidEmail) "success" else "error"
-                        help = if (state.isValidEmail) null else state.emailError
-                    }
-                    input {
-                        attrs {
-                            prefix = buildElement {
-                                icon {
-                                    attrs.type = "mail"
-                                }
-                            }
-                            placeholder = props.intl.formatMessage(jsObject {
-                                id = "subscribe.content.input-email.placeholder"
-                            }, undefined)
-                            onChange = { event ->
-                                event.persist()
-
-                                val inputValue = event.target.asDynamic().value as String
-
-                                presenter.validateEmail(inputValue)
+                                presenter.validateAddress(inputValue)
                             }
                         }
                     }
@@ -153,13 +109,12 @@ class SubscribeComponent : Component<SubscribeProps, SubscribeState, SubscribeVi
                 attrs {
                     type = "primary"
                     onClick = {
-                        if (state.isValidUsername && state.isValidEmail) {
-                            val user = User(state.username, state.email)
+                        if (state.isValidAddress) {
+                            val subscription = Subscription(state.address)
 
-                            presenter.subscribe(user)
+                            props.onSubscribe(subscription)
                         } else {
-                            presenter.validateUsername(state.username)
-                            presenter.validateEmail(state.email)
+                            presenter.validateAddress(state.address)
                         }
                     }
                 }

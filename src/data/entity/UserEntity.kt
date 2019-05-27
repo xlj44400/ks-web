@@ -4,6 +4,6 @@ data class UserEntity(
         val id: String,
         val username: String,
         val email: String,
-        val password: String?,
-        var isSubscribed: Boolean = false,
-        var isAuthenticated: Boolean = false)
+        val password: String,
+        var subscription: SubscriptionEntity?,
+        var isAuthenticated: Boolean)
