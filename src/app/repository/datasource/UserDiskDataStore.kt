@@ -1,24 +1,41 @@
 package app.repository.datasource
 
+import data.entity.UserEntity
+import data.repository.UserQuery
 import data.repository.datasource.UserDataStore
-import domain.User
 import kotlin.browser.localStorage
 
 class UserDiskDataStore : UserDataStore {
-    override fun findById(id: String): User? = localStorage.getItem("users")?.let {
-        JSON.parse<Array<User>>(it).filter { u -> !u.hasTelegram }.find { u -> u.id == id }
+    override fun findById(id: String): UserEntity? = localStorage.getItem("users")?.let {
+        JSON.parse<Array<UserEntity>>(it).find { u -> !u.isSubscribed && u.id == id }
     }
 
-    override fun findByUsername(username: String, hasTelegram: Boolean): User? = localStorage.getItem("users")?.let {
-        JSON.parse<Array<User>>(it).filter { u -> u.hasTelegram == hasTelegram }.find { u -> u.username == username }
+    override fun findOne(query: UserQuery): UserEntity? = localStorage.getItem("users")?.let {
+        JSON.parse<Array<UserEntity>>(it).singleOrNull { u ->
+            var condition = query.isSubscribed?.let { isSubscribed ->
+                (isSubscribed == u.isSubscribed)
+            } ?: !u.isSubscribed
+
+            condition = if (!query.username.isNullOrEmpty() && !query.email.isNullOrEmpty()) {
+                condition && (query.username == u.username || query.email == u.email)
+            } else {
+                condition = query.username?.let { username ->
+                    condition && username == u.username
+                } ?: condition
+
+                condition = query.email?.let { email ->
+                    condition && email == u.email
+                } ?: condition
+
+                condition
+            }
+
+            condition
+        }
     }
 
-    override fun findByEmail(email: String): User? = localStorage.getItem("users")?.let {
-        JSON.parse<Array<User>>(it).filter { u -> !u.hasTelegram }.find { u -> u.email == email }
-    }
-
-    override fun create(user: User) = localStorage.getItem("users")?.let {
-        val users = JSON.parse<Array<User>>(it).toMutableList()
+    override fun create(user: UserEntity) = localStorage.getItem("users")?.let {
+        val users = JSON.parse<Array<UserEntity>>(it).toMutableList()
 
         users.add(user)
 
@@ -31,11 +48,11 @@ class UserDiskDataStore : UserDataStore {
         localStorage.setItem("users", JSON.stringify(users))
     }
 
-    override fun update(user: User) = localStorage.getItem("users")?.let {
-        val users = mutableListOf<User>()
+    override fun update(user: UserEntity) = localStorage.getItem("users")?.let {
+        val users = mutableListOf<UserEntity>()
 
-        JSON.parse<Array<User>>(it).forEach { u ->
-            if (u.id == user.id && !u.hasTelegram) {
+        JSON.parse<Array<UserEntity>>(it).forEach { u ->
+            if (u.id == user.id && !u.isSubscribed) {
                 u.isAuthenticated = user.isAuthenticated
             }
 

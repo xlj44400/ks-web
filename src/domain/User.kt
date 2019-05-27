@@ -3,22 +3,42 @@ package domain
 import kotlin.random.Random
 
 class User {
-    companion object {
-        fun create(username: String, email: String, password: String): User {
-            return User().apply {
-                this.id = "$username$${Random.nextInt(0, 9999)}"
-                this.username = username
-                this.email = email
-                this.password = password
-            }
-        }
+    constructor(
+            username: String? = null,
+            email: String? = null,
+            password: String? = null) {
+        this.id = "$username${Random.nextInt(9999)}"
+        this.username = username
+        this.email = email
+        this.password = password
     }
 
-    var id = ""
-    var username = ""
-    var email = ""
-    var password = ""
+    constructor(
+            id: String,
+            username: String,
+            email: String,
+            password: String?) : this(username, email, password) {
+        this.id = id
+    }
 
-    var isAuthenticated = false
-    var hasTelegram = false
+    fun subscribe(isSubscribed: Boolean = true) = apply {
+        this.isSubscribed = isSubscribed
+    }
+
+    fun authenticate(isAuthenticated: Boolean = true) = apply {
+        this.isAuthenticated = isAuthenticated
+    }
+
+    var id: String = ""
+        private set
+
+    val username: String?
+    val email: String?
+    val password: String?
+
+    var isSubscribed: Boolean = false
+        private set
+
+    var isAuthenticated: Boolean = false
+        private set
 }

@@ -219,7 +219,7 @@ class NavbarComponent : Component<NavbarProps, NavbarState, NavbarView>(), Navba
                                                 id = "navbar.welcome"
                                             }, undefined)
                                             +" "
-                                            routeLink("/user/${props.user.id}/account") { +props.user.username }
+                                            routeLink("/user/${props.user.id}/account") { +props.user.username!! }
                                         }
                                     } else {
                                         buttonGroup {

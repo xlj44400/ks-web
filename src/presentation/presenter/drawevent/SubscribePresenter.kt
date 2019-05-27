@@ -1,5 +1,6 @@
 package presentation.presenter.drawevent
 
+import data.repository.UserQuery
 import data.repository.UserRepository
 import domain.User
 import presentation.presenter.Presenter
@@ -27,13 +28,9 @@ class SubscribePresenter(view: SubscribeView, private val userRepository: UserRe
     fun subscribe(user: User) {
         view.showLoading()
 
-        val foundUser = userRepository.findByUsername(user.username, true)
-
-        if (foundUser != null) {
+        userRepository.findOne(UserQuery(username = user.username!!, isSubscribed = true))?.let {
             view.showError(Error.USER_ALREADY_SUBSCRIBED.key)
-        } else {
-            view.onSubscribe(user)
-        }
+        } ?: view.onSubscribe(user)
 
         view.hideLoading()
     }
